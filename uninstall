@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+#1) Remove external packages and build
+rm -rf external_packages/LBT* external_packages/iSS external_packages/music/ examples/test_hydro_files/ external_packages/freestream-milne/ external_packages/smash/smash_code/ external_packages/ipglasma build
+
+#2) deactivate virtual env
+source ${CONDA_PREFIX_1}/etc/profile.d/conda.sh
+conda deactivate
+
+#3) Destroy virtual env
+mamba env remove -n jetscape
+
+#4) Provide instruction to remove mamba
+echo "We finished uninstalling JETSCAPE. To get rid of the mamba installation"
+echo "you can use \"rm -rf ${CONDA_PREFIX}\""
+echo "and edit your \"${HOME}/.bashrc\" file"
+echo "to remove everything between \"# >>> conda initialize >>>\""
+echo "and \"# <<< conda initialize <<<\" (inclusive)"

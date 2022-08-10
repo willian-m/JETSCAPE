@@ -1,0 +1,102 @@
+#!/usr/bin/bash
+
+#1) Get mamba
+if ! command -v mamba &> /dev/null ; then 
+    curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+    bash Mambaforge-$(uname)-$(uname -m).sh -p ${HOME}/.mamba -u -b
+    ${HOME}/.mamba/bin/mamba init bash
+    echo "Mamba installed. Reset your terminal and re-run this script to finish JETSCAPE installation"
+    echo "If you are not using bash, you may need to execute \"${HOME}/.mamba/bin/mamba init $(basename ${SHELL})\" before proceeding."
+    rm Mambaforge-$(uname)-$(uname -m).sh
+    exit 0
+fi
+
+source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+
+#2) create jetscape environment
+mamba env create -f jetscape.yaml -n jetscape
+conda activate jetscape #Need to use conda to activate 
+
+PREFIX=${CONDA_PREFIX}
+export JETSCAPE_DIR=${PWD}
+
+conda env config vars set PREFIX=${PREFIX} JETSCAPE_DIR=${JETSCAPE_DIR}
+
+#3) Get HepMC3
+curl -SL https://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.5.tar.gz | tar -xvzC ${PREFIX}
+if [ $? -ne 0 ]; then exit $? ; fi
+cd ${PREFIX}
+mkdir ${PREFIX}/hepmc3-build
+cd hepmc3-build
+cmake ../HepMC3-3.2.5 -DCMAKE_INSTALL_PREFIX=${PREFIX} -DHEPMC3_ENABLE_ROOTIO=ON \
+                      -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON -DCMAKE_CXX_STANDARD=17
+if [ $? -ne 0 ]; then exit $? ; fi
+make -j8 install
+if [ $? -ne 0 ]; then exit $? ; fi
+rm -r ${PREFIX}/hepmc3-build
+#export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+
+#4) Install pythia
+export pythiaV="8307"
+curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvzC ${PREFIX}
+if [ $? -ne 0 ]; then exit $? ; fi
+cd ${PREFIX}/pythia${pythiaV}
+./configure --enable-shared --prefix=${PREFIX} --with-hepmc3=${PREFIX}/HepMC3-3.2.0
+if [ $? -ne 0 ]; then exit $? ; fi
+make -j8
+if [ $? -ne 0 ]; then exit $? ; fi
+make -j8 install
+if [ $? -ne 0 ]; then exit $? ; fi
+
+
+#5) Setup environment variables
+export SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
+export EIGEN3_ROOT="${PREFIX}/eigen3"
+export PYTHIA8DIR="${PREFIX}/pythia8307"
+export PYTHIA8_ROOT_DIR="${PREFIX}/pythia8307"
+
+conda env config vars set SMASH_DIR=${SMASH_DIR} EIGEN3_ROOT=${EIGEN3_ROOT} PYTHIA8DIR=${PYTHIA8DIR} PYTHIA8_ROOT_DIR=${PYTHIA8_ROOT_DIR}
+
+#6) Install FastJet and FastJetConribs
+curl -SL http://fastjet.fr/repo/fastjet-3.3.2.tar.gz | tar -xvzC ${PREFIX} 
+cd ${PREFIX}/fastjet-3.3.2
+./configure --prefix=${PREFIX}
+make -j8
+make -j8 install
+rm -r ${PREFIX}/fastjet-3.3.2
+
+curl -SL http://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.041.tar.gz | tar -xvzC ${PREFIX} 
+cd ${PREFIX}/fjcontrib-1.041
+./configure
+make -j8
+make -j8 install
+rm -r ${PREFIX}/fjcontrib-1.041
+
+#7) Grab external packages
+cd ${JETSCAPE_DIR}/external_packages
+./get_clvisc.sh
+./get_freestream-milne.sh
+./get_ipglasma.sh
+./get_iSS.sh
+./get_lbtTab.sh
+./get_music.sh
+cd  ${JETSCAPE_DIR}/external_packages/music
+patch -p1 < ../music.patch
+cd ${JETSCAPE_DIR}/external_packages
+
+#8) Custom get smash
+rm -rf smash
+git clone --depth=1 https://github.com/smash-transport/smash.git --branch SMASH-2.2 smash/smash_code
+cd smash/smash_code
+mkdir build
+cd build
+cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config -DCMAKE_CXX_STANDARD=17
+number_of_cores_to_compile=$(( ${number_of_cores} > 20 ? 20 : ${number_of_cores} ))
+echo "Compiling SMASH using ${number_of_cores_to_compile} cores."
+make -j${number_of_cores} smash_shared
+
+#9) Build JETSCAPE
+mkdir -p ${JETSCAPE_DIR}/build 
+cd ${JETSCAPE_DIR}/build
+cmake .. -DUSE_FREESTREAM=ON -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_SMASH=ON -DCMAKE_CXX_STANDARD=17
+make -j
