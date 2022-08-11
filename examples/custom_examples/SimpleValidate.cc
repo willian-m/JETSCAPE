@@ -24,6 +24,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 #include "Brick.h"
@@ -46,12 +47,12 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   JetScapeLogger::Instance()->SetInfo(true);
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
   Show();
 
   // Main framework task
@@ -75,15 +76,15 @@ int main(int argc, char** argv)
 
   // Energy loss wrapper
   auto jloss = make_shared<JetEnergyLoss> ();
-  
+
   // Energy loss module, can also add multiple ones.
   // Parameters in XML file
   // auto eloss1 = make_shared<ValidationEloss> ();
   auto eloss1 = make_shared<ElossValidate> ();
-  
+
   // Pure Ascii writer
   auto writer= make_shared<JetScapeWriterAscii> ("validate_out.dat");
- 
+
   //Remark: For now modules have to be added in proper "workflow" order
   jetscape->Add(ini);
   jetscape->Add(pGun);
@@ -91,7 +92,7 @@ int main(int argc, char** argv)
 
   // add module to the eloss wrapper, than the eloss wrapper to the manager
   jloss->Add(eloss1);
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
   // TODO: Should add hadronizer here
@@ -114,7 +115,7 @@ int main(int argc, char** argv)
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
-  
+
   return 0;
 }
 

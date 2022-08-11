@@ -18,6 +18,7 @@ set (SOURCES  ${SOURCES}  ${frameworksources} )
 
 if(NOT "${HEPMC_FOUND}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMC.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMCRootTree.cc)
 endif()
 
 #initialstate

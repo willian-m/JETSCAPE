@@ -26,6 +26,7 @@
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 #include <iostream>
@@ -738,6 +739,8 @@ void JetScape::DetermineWritersFromXML() {
                         outputFilenameAsciiGZ.append(".dat.gz"));
   CheckForWriterFromXML("JetScapeWriterHepMC",
                         outputFilenameHepMC.append(".hepmc"));
+  CheckForWriterFromXML("JetScapeWriterHepMCRootTree",
+                        outputFilenameHepMC.append(".root"));
   CheckForWriterFromXML("JetScapeWriterFinalStatePartonsAscii",
                         outputFilenameFinalStatePartonsAscii.append("_final_state_partons.dat"));
   CheckForWriterFromXML("JetScapeWriterFinalStateHadronsAscii",
@@ -785,6 +788,22 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
       Add(writer);
       JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
              << outputFilename.c_str() << ") added to task list.";
+#else
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+             << outputFilename.c_str() << ") - Not compiled with HEPMC. It was not added to task list.";
+#endif
+    }
+    else if (strcmp(writerName, "JetScapeWriterHepMCRootTree") == 0) {
+#ifdef USE_HEPMC
+      VERBOSE(2) << "Manually creating JetScapeWriterHepMCRootTree (due to multiple "
+                    "inheritance)";
+      auto writer = std::make_shared<JetScapeWriterHepMCRootTree>(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+             << outputFilename.c_str() << ") added to task list.";
+#else
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+             << outputFilename.c_str() << ") - Not compiled with HEPMC. It was not added to task list.";
 #endif
     } else {
       VERBOSE(2) << "Writer is NOT created...";

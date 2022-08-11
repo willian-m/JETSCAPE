@@ -30,6 +30,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 // User modules derived from jetscape framework clasess
@@ -68,7 +69,7 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
     
   // DEBUG=true by default and REMARK=false
@@ -79,7 +80,7 @@ int main(int argc, char** argv)
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
   Show();
 
   auto jetscape = make_shared<JetScape>();
@@ -94,7 +95,7 @@ int main(int argc, char** argv)
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<HydroFromFile> ();
   //auto hydro = make_shared<GubserHydro> ();
-  
+
   auto matter = make_shared<Matter> ();
   auto lbt = make_shared<LBT> ();
   auto martini = make_shared<Martini> ();
@@ -115,7 +116,7 @@ int main(int argc, char** argv)
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
 #ifdef USE_HEPMC
   auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   jetscape->Add(writerhepmc);
@@ -124,7 +125,7 @@ int main(int argc, char** argv)
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
+
 #ifdef USE_HDF5
   auto initial = make_shared<InitialFromFile>();
   jetscape->Add(initial);
@@ -144,9 +145,9 @@ int main(int argc, char** argv)
   jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
   //jloss->Add(adscft);
-  
+
   jlossmanager->Add(jloss);
-  
+
   jetscape->Add(jlossmanager);
 
   //hadro->Add(hadroModule);
@@ -180,7 +181,7 @@ int main(int argc, char** argv)
   writer->WriteComment ( oss.str() );
   oss.str(""); oss << "nAccepted = " << info.nAccepted();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();
   writer->WriteComment ( oss.str() );
   oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
   writer->WriteComment ( oss.str() );
@@ -208,10 +209,10 @@ int main(int argc, char** argv)
   cout << " nTried    = " << info.nTried() << endl;
   cout << " nSelected = " << info.nSelected()  << endl;
   cout << " nAccepted = " << info.nAccepted()  << endl;
-  cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;  
+  cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;
   cout << " sigmaErr  = " <<   info.sigmaErr()  << endl;
- 
-  
+
+
   return 0;
 }
 

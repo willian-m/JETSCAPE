@@ -23,6 +23,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 // User modules derived from jetscape framework clasess
@@ -57,11 +58,11 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   string XMLname="./pwg2_init.xml";
   string outname="test_out.dat.gz";
-  int Nevents = 10;  
-  
+  int Nevents = 10;
+
   if ( argc >1 && string(argv[1]) == "-h" ) {
     cout << "Usage: PWG2Wrapper [xmlname] [outputname] [Nevents]" << endl;
     return -1;
@@ -109,7 +110,7 @@ int main(int argc, char** argv)
   auto init = make_shared<InitialState>();
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
-  
+
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto matter = make_shared<Matter> ();
@@ -120,15 +121,15 @@ int main(int argc, char** argv)
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
   auto colorless = make_shared<ColorlessHadronization> ();
-  
+
   // auto writer= make_shared<JetScapeWriterAscii> (outname);
-  auto writer= make_shared<JetScapeWriterAsciiGZ> (outname);  
+  auto writer= make_shared<JetScapeWriterAsciiGZ> (outname);
 #ifdef USE_HEPMC
   // auto writer= make_shared<JetScapeWriterHepMC> (outname);
 #endif
 
   //Remark: For now modules have to be added
-  //in proper "workflow" order (can be defined via xml and sorted if necessary)  
+  //in proper "workflow" order (can be defined via xml and sorted if necessary)
   // jetscape->Add(trento);
   jetscape->Add(init);
   jetscape->Add(pythiaGun);
@@ -138,7 +139,7 @@ int main(int argc, char** argv)
   jloss->Add(matter);
   //jloss->Add(martini);
   //jloss->Add(adscft);
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
   // hadronization
@@ -152,7 +153,7 @@ int main(int argc, char** argv)
 
   // Intialize all modules tasks
   jetscape->Init();
-  
+
   // Run JetScape with all task/modules as specified ...
   jetscape->Exec();
 
@@ -167,7 +168,7 @@ int main(int argc, char** argv)
   writer->WriteComment ( oss.str() );
   oss.str(""); oss << "nAccepted = " << info.nAccepted();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();
   writer->WriteComment ( oss.str() );
   oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
   writer->WriteComment ( oss.str() );
@@ -183,7 +184,7 @@ int main(int argc, char** argv)
   writer->WriteComment ( oss.str() );
 
   writer->WriteComment ( "/EVENT GENERATION INFORMATION" );
-  
+
   // Finalize
   jetscape->Finish();
   
@@ -195,12 +196,12 @@ int main(int argc, char** argv)
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
 
-    
+
   // Print pythia statistics
   // pythiaGun->stat();
 
- 
-  
+
+
   return 0;
 }
 

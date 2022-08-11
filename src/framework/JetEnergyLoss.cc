@@ -35,6 +35,7 @@
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 #define BOLDCYAN "\033[1m\033[36m" /* Bold Cyan */
@@ -365,7 +366,7 @@ void JetEnergyLoss::Exec() {
        //Check Memory ...
        VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
        JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       
+
        PartonShowerGenerator PSG;
        PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
        // Overall not the nicest logic though .... Just to make changing and expanding the shower code in the future ...
