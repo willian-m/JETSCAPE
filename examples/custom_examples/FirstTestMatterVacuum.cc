@@ -28,6 +28,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 

@@ -23,6 +23,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 //User modules derived from jetscape framework clasess
@@ -88,7 +89,7 @@ int main(int argc, char** argv)
   auto freestream = make_shared<FreestreamMilneWrapper> ();
   auto hydro = make_shared<MpiMusic> ();
   //auto hydro = make_shared<GubserHydro> ();
-  
+
   // surface sampler
   auto iSS = make_shared<iSpectraSamplerWrapper> ();
 

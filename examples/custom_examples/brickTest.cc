@@ -28,6 +28,7 @@
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 // User modules derived from jetscape framework clasess
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
     
   // DEBUG=true by default and REMARK=false
@@ -71,14 +72,14 @@ int main(int argc, char** argv)
   //SetVerboseLevel (9 adds a lot of additional debug output)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
   Show();
 
   auto jetscape = make_shared<JetScape>();
   jetscape->SetXMLMainFileName("../config/jetscape_main.xml");
   jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   jetscape->SetId("primary");
-  
+
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
@@ -104,10 +105,10 @@ int main(int argc, char** argv)
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   // jloss->Add(martini);
   // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
-  
+
   // Hadronization
   // This helper module currently needs to be added for hadronization.
   // auto printer = make_shared<PartonPrinter> ();
