@@ -120,6 +120,11 @@ void SmashWrapper::ExecuteTask() {
   // SMASH within JETSCAPE only works with one (the first) ensemble
   smash::Particles *smash_particles = smash_experiment_->first_ensemble();
   for (unsigned int i = 0; i < n_events; i++) {
+    if (modus->jetscape_hadrons_[i].size() <= 0){ //Empty event
+      JSWARN << "Event " << i << " is empty. Skipping event.";
+      smash_experiment_->initialize_new_event();
+      continue;
+    }
     JSINFO << "Event " << i << " SMASH starts with "
            << modus->jetscape_hadrons_[i].size() << " particles.";
     smash_experiment_->initialize_new_event();
