@@ -17,10 +17,10 @@ bool filename_is_hdf5(const fs::path& path) {
   if (!path.has_extension())
     return false;
 
-  auto hdf5_exts = {".hdf5", ".hdf", ".hd5", ".h5"};
-  auto result = std::find(hdf5_exts.begin(), hdf5_exts.end(), path.extension());
+  std::array<std::string,4> hdf5_exts = {".hdf5", ".hdf", ".hd5", ".h5"};
+  for (auto exts : hdf5_exts) if(exts.compare(path.extension().string() )) return true;
 
-  return result != hdf5_exts.end();
+  return false;
 }
 
 bool filename_is_hdf5(const std::string& path) {
