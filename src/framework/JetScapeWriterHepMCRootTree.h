@@ -23,6 +23,7 @@
 #include "PartonShower.h"
 
 #include "HepMC3/GenEvent.h"
+#include "HepMC3/GenParticle.h"
 #include "HepMC3/ReaderAscii.h"
 #include "HepMC3/WriterRootTree.h"
 #include "HepMC3/Print.h"
@@ -40,8 +41,10 @@ class JetScapeWriterHepMCRootTree : public JetScapeWriter, public HepMC3::Writer
 
 public:
   JetScapeWriterHepMCRootTree() : HepMC3::WriterRootTree("") { SetId("HepMC Root Tree writer"); };
-  JetScapeWriterHepMCRootTree(string m_file_name_out)
-      : JetScapeWriter(m_file_name_out), HepMC3::WriterRootTree(m_file_name_out) {
+  JetScapeWriterHepMCRootTree(string m_file_name_out):
+      JetScapeWriter(m_file_name_out),
+      HepMC3::WriterRootTree(m_file_name_out),
+      hadronizationvertex(nullptr) {
     SetId("HepMC Root Tree writer");
   };
   virtual ~JetScapeWriterHepMCRootTree();
@@ -107,6 +110,8 @@ private:
                             particle.e());
     return make_shared<GenParticle>(pmom, particle.pid(), particle.pstat());
   }
+
+  inline void Clear(){hadronizationvertex=nullptr;};
 
   //int m_precision; //!< Output precision
 };

@@ -318,11 +318,12 @@ void JetScapeWriterHepMCRootTree::Write(weak_ptr<Hadron> h) {
 
   // now attach
   auto hepmc = castHadronToHepMC(hadron);
-  if ( !hepmc->status() ) {
-    // unless otherwise specified, all hadrons get status 1
-    // TODO: Need to better account for short-lived hadrons
-    hepmc->set_status(1);
-  }
+  // unless otherwise specified, all hadrons get status 1
+  // TODO: Need to better account for short-lived hadrons
+  hepmc->set_status(1);
+  //if ( !hepmc->status() ) {
+  //  hepmc->set_status(1);
+  //}
   hadronizationvertex->add_particle_out(hepmc);
 }
 
