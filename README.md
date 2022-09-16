@@ -10,6 +10,17 @@ Please cite [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) if you us
 
 Please see the [Installation Instructions](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Installation).
 
+This is an adapted version which is also able to be installed in a conda environment.
+If you do not use conda environments yet, we recommend following the install
+instructions of [`mamba`](https://mamba.readthedocs.io/en/latest/installation.html)
+environment manager (a faster alternative to the standard conda).
+
+Once your installation is completed, you create the jetscape environment with
+`mamba env create -f jetscape. yaml`
+
+Activate the environment with `mamba activate jetscape` and then execute the
+install script `./install`
+
 ## Running JETSCAPE
 
 The main executable to generate JETSCAPE events is `runJetscape`, located in the `build/` directory.
