@@ -16,7 +16,9 @@
 # download the code package
 #git clone git://git.code.sf.net/p/music-hydro/code music
 #git clone --depth=1 git://git.code.sf.net/p/music-hydro/code music
-git clone --depth=1 https://github.com/MUSIC-fluid/MUSIC music
+git clone git@github.com:willian-m/MUSIC.git music
+cd music
+git checkout serenone_dev
 
 
 ### ALTERNATIVE VERSION

@@ -14,5 +14,7 @@
 ##############################################################################
 
 # download the code package
-git clone --depth=1 https://github.com/chunshen1987/iSS iSS
+git clone https://github.com/willian-m/iSS iSS
+cd iSS
+git checkout serenone_dev
 
