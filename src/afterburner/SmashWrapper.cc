@@ -153,6 +153,7 @@ void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
       f->WriteWhiteSpace("[" + to_string(++i) + "] H");
       f->Write(hadron);
     }
+    f->Clear();
   }
 }
 

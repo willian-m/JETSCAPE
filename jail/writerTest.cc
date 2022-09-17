@@ -22,6 +22,7 @@
 #include "JetScapeWriterAsciiGZ.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMCRootTree.h"
 #endif
 
 // User modules derived from jetscape framework clasess
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
     
   // DEBUG=true by default and REMARK=false
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(8);
-   
+
   Show();
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
@@ -69,15 +70,15 @@ int main(int argc, char** argv)
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
-  
+
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
-  
+
   auto pGun= make_shared<PGun> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   //auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
 #ifdef HepMC
   auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
 #endif
@@ -86,7 +87,7 @@ int main(int argc, char** argv)
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
+
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
@@ -97,9 +98,9 @@ int main(int argc, char** argv)
   jloss->Add(martini);
   
   jlossmanager->Add(jloss);
-  
+
   jetscape->Add(jlossmanager);
-  
+
   jetscape->Add(writer);
 
   // Initialize all modules tasks
