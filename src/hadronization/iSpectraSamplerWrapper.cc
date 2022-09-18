@@ -125,6 +125,7 @@ void iSpectraSamplerWrapper::Exec() {
   iSpectraSampler_ptr_->set_random_seed(random_seed);
   VERBOSE(2) << "Random seed used for the iSS module" << random_seed;
 
+    iSpectraSampler_ptr_->compute_spin_polarization();
   status = iSpectraSampler_ptr_->generate_samples();
   if (status != 0) {
     JSWARN << "Some errors happened in generating particle samples";
