@@ -95,6 +95,7 @@ public:
   std::vector<double> pi23_;
   std::vector<double> pi33_;
   std::vector<double> bulk_Pi_;
+  double tau_hydro_;
 };
 
 } // end namespace Jetscape

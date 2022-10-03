@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <MakeUniqueHelper.h>
+#include <typeinfo>
 
 #include <string>
 #include <sstream>
@@ -24,6 +25,7 @@
 
 #include "JetScapeLogger.h"
 #include "MusicWrapper.h"
+#include "NullPreDynamics.h"
 
 using namespace Jetscape;
 
@@ -59,9 +61,16 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
   if (flag_output_evo_to_file == 1) {
     music_hydro_ptr->set_parameter("output_evolution_to_file", 2);
   }
-  double tau_hydro = (
-          GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
-  music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
+
+  if (typeid(*pre_eq_ptr.get()) == typeid(NullPreDynamics)){
+    double tau_hydro = (
+            GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
+    music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
+    JSINFO << "Initial hydro time (from MUSIC input) is set to" << tau_hydro;
+  } else {
+    music_hydro_ptr->set_parameter("Initial_time_tau_0", pre_eq_ptr->tau_hydro_);
+    JSINFO << "Initial hydro time (from pre-equilibrium input) is set to " << pre_eq_ptr->tau_hydro_;
+  }
 
   double eta_over_s =
       GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
@@ -154,6 +163,11 @@ void MpiMusic::EvolveHydro() {
   if (pre_eq_ptr == nullptr) {
     JSWARN << "Missing the pre-equilibrium module ...";
   } else {
+    if (typeid(*pre_eq_ptr.get()) != typeid(NullPreDynamics))
+    {
+      music_hydro_ptr->set_parameter("Initial_time_tau_0", pre_eq_ptr->tau_hydro_);
+      JSINFO << "Updated Initial hydro time to " << pre_eq_ptr->tau_hydro_;
+    }
     music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
         dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
         pre_eq_ptr->utau_, pre_eq_ptr->ux_, pre_eq_ptr->uy_, pre_eq_ptr->ueta_,
