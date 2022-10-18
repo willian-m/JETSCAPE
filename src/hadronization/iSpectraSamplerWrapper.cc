@@ -78,16 +78,16 @@ void iSpectraSamplerWrapper::InitTask() {
 
   // set default parameters
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_shear", 1);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_bulk", 0);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_bulk", 1);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_rhob", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_diff", 0);
 
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_shear", 1);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_bulk", 0);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("bulk_deltaf_kind", 1);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_bulk", 1);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("bulk_deltaf_kind", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_diffusion", 0);
 
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("restrict_deltaf", 0);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("restrict_deltaf", 1);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("deltaf_max_ratio", 1.0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("f0_is_not_small", 1);
 
