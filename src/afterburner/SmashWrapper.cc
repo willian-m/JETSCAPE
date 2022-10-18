@@ -145,6 +145,8 @@ void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
   if (!f) {
     return;
   }
+
+  double pions = 0;
   AfterburnerModus *modus = smash_experiment_->modus();
   f->WriteComment("JetScape module: " + GetId());
   for (const auto &event : modus->jetscape_hadrons_) {
@@ -152,7 +154,14 @@ void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
     for (const auto hadron : event) {
       f->WriteWhiteSpace("[" + to_string(++i) + "] H");
       f->Write(hadron);
+
+      //Count pions at midrapidity - Used for fast cross-check. For AuAu @ 200 GeV, should be ~ 600
+      if ( (fabs(hadron.get()->rapidity()) < .5)  && (abs(hadron.get()->pid()) == 211) ) {
+        pions++;
+      }
     }
+    JSINFO << "π⁻ + π⁺ at |y| < 0.5: " << pions;
+    pions=0;
     f->Clear();
   }
 }
@@ -178,7 +187,7 @@ void SmashWrapper::smash_particles_to_JS_hadrons(
   JS_hadrons.clear();
   for (const auto &particle : smash_particles) {
     const int hadron_label = 0;
-    const int hadron_status = -1;
+    const int hadron_status = 1;
     const int hadron_id = particle.pdgcode().get_decimal();
     smash::FourVector p = particle.momentum(), r = particle.position();
     const FourVector hadron_p(p.x1(), p.x2(), p.x3(), p.x0()),
