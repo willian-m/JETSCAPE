@@ -86,7 +86,8 @@ void JetScapeWriterHepMCRootTree::WriteHeaderToFile() {
     heavyion->Npart_proj = GetHeader().GetNpart();
   }
   if (GetHeader().GetTotalEntropy() > -1) {
-    // nothing good in the HepMC standard. Something related to mulitplicity would work
+    heavyion->impact_parameter = GetHeader().GetTotalEntropy();
+    // Use impact_parameter as a proxy for entropy
   }
 
   if (GetHeader().GetEventPlaneAngle() > -999) {
@@ -320,7 +321,7 @@ void JetScapeWriterHepMCRootTree::Write(weak_ptr<Hadron> h) {
   auto hepmc = castHadronToHepMC(hadron);
   // unless otherwise specified, all hadrons get status 1
   // TODO: Need to better account for short-lived hadrons
-  hepmc->set_status(1);
+  //hepmc->set_status(1);
   //if ( !hepmc->status() ) {
   //  hepmc->set_status(1);
   //}
