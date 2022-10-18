@@ -28,6 +28,7 @@
 #include "collider.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
+#include "JetScapeWriter.h"
 
 using OptDesc = po::options_description;
 using VarMap = po::variables_map;
@@ -64,6 +65,7 @@ public:
   void Exec();
   void Clear();
   void InitTask();
+  void CollectHeader(weak_ptr<JetScapeWriter> w);
 
   struct RangeFailure : public std::runtime_error {
     using std::runtime_error::runtime_error;

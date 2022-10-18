@@ -413,4 +413,18 @@ void TrentoInitial::Clear() {
   num_of_binary_collisions_.clear();
 }
 
+void TrentoInitial::CollectHeader(weak_ptr<JetScapeWriter> w){
+
+  auto writer = w.lock();
+  if (!writer){
+    JSWARN << "TrentoInitial::CollectHeader writer pointer expired!";
+    return;
+  }
+  auto &header = writer->GetHeader();
+  header.SetNpart(info_.num_participant );
+  header.SetNcoll(info_.num_binary_collisions );
+  header.SetTotalEntropy(info_.total_entropy );
+  header.SetEventPlaneAngle(0);
+}
+
 } // end namespace Jetscape
